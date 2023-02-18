@@ -1,3 +1,5 @@
+# reference: https://www.youtube.com/watch?v=rq8cL2XMM5M&list=PL-osiE80TeTsqhIuOqKhwlXsIBIdSeYtc&index=3
+
 class Employee:
 
     num_of_emps = 0
