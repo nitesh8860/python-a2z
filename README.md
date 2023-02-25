@@ -9,5 +9,6 @@ We are focusing on following topics:
 - algorithms
 - leetcode
 - frameworks
+- design patterns
 
 Every snippet, if it from a lecture on the internet, has a link to it as the comment on top.
