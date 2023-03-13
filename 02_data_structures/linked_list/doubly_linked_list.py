@@ -120,6 +120,84 @@ class DoublyLinkedList:
             cur = cur.prev
         if tmp:
             self.head = tmp.prev
+
+          
+    def delete_node(self, node):
+        cur = self.head
+        while cur:
+            if cur == node and cur == self.head:
+                # Case 1:
+                if not cur.next:
+                    cur = None 
+                    self.head = None
+                    return
+
+                # Case 2:
+                else:
+                    nxt = cur.next
+                    cur.next = None 
+                    nxt.prev = None
+                    cur = None
+                    self.head = nxt
+                    return 
+
+            elif cur == node:
+                # Case 3:
+                if cur.next:
+                    nxt = cur.next 
+                    prev = cur.prev
+                    prev.next = nxt
+                    nxt.prev = prev
+                    cur.next = None 
+                    cur.prev = None
+                    cur = None
+                    return
+
+                # Case 4:
+                else:
+                    prev = cur.prev 
+                    prev.next = None 
+                    cur.prev = None 
+                    cur = None 
+                    return 
+            cur = cur.next
+
+    def reverse(self):
+        tmp = None 
+        cur = self.head
+        while cur:
+            tmp = cur.prev
+            cur.prev = cur.next
+            cur.next = tmp
+            cur = cur.prev
+        if tmp:
+            self.head = tmp.prev
+          
+    def remove_duplicates(self):
+        cur = self.head
+        seen = dict()
+        while cur:
+            if cur.data not in seen:
+                seen[cur.data] = 1
+                cur = cur.next
+            else:
+                nxt = cur.next
+                self.delete_node(cur)
+                cur = nxt
+
+    def pairs_with_sum(self, sum_val):
+        pairs = []
+        p = self.head
+        q = None
+        while p:
+            q = p.next
+            while q:
+                if p.data + q.data == sum_val:
+                    pairs.append("("+str(p.data)+","+str(q.data)+")")
+                q = q.next
+            p = p.next
+        return pairs
+
 # --------------- #
 print("#-------------------------------------#")
 print("append and prepend")
@@ -184,3 +262,35 @@ dllist.append(4)
 dllist.print_list()
 dllist.reverse()
 dllist.print_list()
+
+# --------------- #
+print("#-------------------------------------#")
+print("remove duplicates from a list")
+dllist = DoublyLinkedList()
+dllist.append(8)
+dllist.append(4)
+dllist.append(4)
+dllist.append(6)
+dllist.append(4)
+dllist.append(8)
+dllist.append(4)
+dllist.append(10)
+dllist.append(12)
+dllist.append(12)
+
+dllist.print_list()
+dllist.remove_duplicates()
+dllist.print_list()
+
+# --------------- #
+print("#-------------------------------------#")
+print("sum of pairs")
+dllist = DoublyLinkedList()
+dllist.append(1)
+dllist.append(2)
+dllist.append(3)
+dllist.append(4)
+dllist.append(5)
+dllist.print_list()
+print("pairs with sum 5")
+print(dllist.pairs_with_sum(5))
