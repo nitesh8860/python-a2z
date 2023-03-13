@@ -1,104 +1,186 @@
-"""
------------------------- Doubly Linked List -------------------------
-"""
 class Node:
-    def __init__(self, data = None):
+    def __init__(self, data):
         self.data = data
         self.next = None
         self.prev = None
 
+
 class DoublyLinkedList:
     def __init__(self):
         self.head = None
-        self.tail = None
-    
-    def length(self):
-        count = 0
+
+    def append(self, data):
+        if self.head is None:
+            new_node = Node(data)
+            self.head = new_node
+        else:
+            new_node = Node(data)
+            cur = self.head
+            while cur.next:
+                cur = cur.next
+            cur.next = new_node
+            new_node.prev = cur
+
+    def prepend(self, data):
+        if self.head is None:
+            new_node = Node(data)
+            self.head = new_node
+        else:
+            new_node = Node(data)
+            self.head.prev = new_node
+            new_node.next = self.head
+            self.head = new_node
+
+    def print_list(self):
+        cur = self.head
+        result = []
+        while cur:
+            result.append(cur.data)
+            cur = cur.next
+        print(result)
+
+    def add_after_node(self, key, data):
         cur = self.head
         while cur:
-            count += 1
+            if cur.next is None and cur.data == key: # only one element in the list
+                self.append(data)
+                return
+            elif cur.data == key:
+                new_node = Node(data)
+                nxt = cur.next
+                cur.next = new_node
+                new_node.next = nxt
+                new_node.prev = cur
+                nxt.prev = new_node
+                return
             cur = cur.next
-        return count
-
-    def get(self, index):
-        if index >= self.length():
-            return "ERROR : index out of range!"
-        idx = 0
+                
+    def add_before_node(self, key, data):
+        cur = self.head 
+        while cur:
+            if cur.prev is None and cur.data == key:
+                self.prepend(data)
+                return
+            elif cur.data == key:
+                new_node = Node(data)
+                prev = cur.prev
+                prev.next = new_node
+                cur.prev = new_node
+                new_node.next = cur
+                new_node.prev = prev
+                return
+            cur = cur.next
+    
+    def delete(self, key):
         cur = self.head
         while cur:
-            if idx == index:
-                return cur
-            idx += 1
+            # key matches to head/first node
+            if cur.data == key and cur == self.head:
+                # Case 1 - key matches to head/first node, and there is just one node in list
+                if not cur.next:
+                    cur = None
+                    self.head = None
+                    return
+                # Case 2 - key matches to head/first node, and there are more nodes in list
+                else:
+                    nxt = cur.next
+                    cur.next = None
+                    nxt.prev = None
+                    cur = None
+                    self.head = nxt
+                    return
+            # key matches to other than head/first node
+            elif cur.data == key:
+                # Case 3 - somewhere between the list
+                if cur.next:
+                    nxt = cur.next
+                    prev = cur.prev
+                    prev.next = nxt
+                    nxt.prev = prev
+                    cur.next = None
+                    cur.prev = None
+                    cur = None
+                    return
+                # Case 4 - last node of the list
+                else:
+                    prev = cur.prev
+                    prev.next = None 
+                    cur.prev = None
+                    cur = None
+                    return
             cur = cur.next
-    
-    def insertAtBeg(self, data):
-        newNode = Node(data)
-        if self.head:
-            newNode.next = self.head
-            self.head.prev = newNode
-            self.head = newNode
-        else:
-            self.head = self.tail = newNode
-    
-    def insertAtEnd(self, data):
-        newNode = Node(data)
-        if self.tail:
-            self.tail.next = newNode
-            newNode.prev = self.tail
-            self.tail = newNode
-        else:
-            self.head = self.tail = newNode
-    
-    def insertAfter(self, refNode, data):
-        if not refNode: #if reference node does not exist
-            return
-        newNode = Node(data)
-        newNode.prev = refNode
-        if refNode.next is None:
-            self.tail = newNode
-        else:
-            newNode.next = refNode.next
-            newNode.next.prev = newNode
-        refNode.next = newNode
 
-    def insertBefore(self, refNode, data):
-        if not refNode: #if reference node does not exist
-            return
-        newNode = Node(data)
-        newNode.next = refNode
-        if refNode.prev is None:
-            self.head = newNode
-        else:
-            newNode.prev = refNode.prev
-            refNode.prev.next = newNode
-        refNode.prev = newNode
-
-    def remove(self, node):
-        if not node: #if reference node does not exist
-            return
-        if not node.prev:
-            self.head = node.next
-        else:
-            node.prev.next = node.next
-        if not node.next:
-            self.tail = node.prev
-        else:
-            node.next.prev = node.prev
-    
-    def display(self):
-        elements = []
+    def reverse(self):
+        tmp = None
         cur = self.head
         while cur:
-            elements.append(cur.data)
-            cur = cur.next
-        return elements
+            tmp = cur.prev
+            cur.prev = cur.next
+            cur.next = tmp
+            cur = cur.prev
+        if tmp:
+            self.head = tmp.prev
+# --------------- #
+print("#-------------------------------------#")
+print("append and prepend")
+dllist = DoublyLinkedList()
+dllist.prepend(0)
+dllist.append(1)
+dllist.append(2)
+dllist.append(3)
+dllist.append(4)
+dllist.prepend(5)
 
-x = DoublyLinkedList() # creating object of doublyLinkedList
-x.insertAtBeg(1) # Inserting 1 at the begining
-x.insertAtEnd(2) # Inserting 2 at the end
-x.insertAtEnd(6) # Inserting 6 at the end
-x.insertAfter(x.get(1),5) # Inserting 5 after 1st(according to index) node
-x.insertBefore(x.get(3),10)# Inserting 10 before 3rd(according to index) node
-x.remove(x.get(1)) # Removing 1st(according to index) node
-print(x.length()) # Print the length of the Linked List
-print(x.display()) # Print the Linked List i.e. [1,5,10,6]
+dllist.print_list()
+
+# --------------- #
+print("#-------------------------------------#")
+print("add after/before node")
+dllist = DoublyLinkedList()
+
+dllist.prepend(0)
+dllist.append(1)
+dllist.append(2)
+dllist.append(3)
+dllist.append(4)
+dllist.prepend(5)
+dllist.print_list()
+
+print("add 6 after key 3")
+dllist.add_after_node(3,6)
+dllist.print_list()
+
+print("add 9 before key 4")
+dllist.add_before_node(4,9)
+dllist.print_list()
+
+# --------------- #
+print("#-------------------------------------#")
+print("delete a node")
+dllist = DoublyLinkedList()
+dllist.append(1)
+dllist.append(2)
+dllist.append(3)
+dllist.append(4)
+dllist.print_list()
+
+print("delete 1,6 and 4")
+dllist.delete(1)
+dllist.delete(6)
+dllist.delete(4)
+dllist.print_list()
+print("delete 3")
+dllist.delete(3)
+dllist.print_list()
+
+# --------------- #
+print("#-------------------------------------#")
+print("reverse a list")
+dllist = DoublyLinkedList()
+dllist.append(1)
+dllist.append(2)
+dllist.append(3)
+dllist.append(4)
+dllist.print_list()
+dllist.reverse()
+dllist.print_list()
